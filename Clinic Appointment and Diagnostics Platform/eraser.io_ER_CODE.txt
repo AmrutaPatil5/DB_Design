@@ -1,0 +1,109 @@
+patients [icon: user, color: blue] {
+  patient_id string pk
+  name string
+  age number
+  gender string
+  phone string
+  email string
+  address string
+  created_at timestamp
+}
+
+specializations [icon: checklist, color: orange] {
+  specialization_id string pk
+  name string
+  description string
+}
+
+doctors [icon: stethoscope, color: purple] {
+  doctor_id string pk
+  name string
+  phone string
+  email string
+  experience_years number
+  specialization_id string fk
+}
+
+
+specializations.specialization_id < doctors.specialization_id
+
+
+appointments [icon: calendar, color: blue] {
+  appointment_id string pk
+  patient_id string fk
+  doctor_id string fk
+  appointment_date date
+  time_slot string
+  status string   // booked, cancelled, completed
+  created_at timestamp
+}
+
+
+patients.patient_id < appointments.patient_id
+doctors.doctor_id < appointments.doctor_id
+
+
+consultations [icon: activity, color: green] {
+  consultation_id string pk
+  appointment_id string fk   // nullable
+  patient_id string fk
+  doctor_id string fk
+  consultation_date timestamp
+  notes string
+  diagnosis string
+}
+
+
+appointments.appointment_id - consultations.appointment_id
+
+
+patients.patient_id < consultations.patient_id
+doctors.doctor_id < consultations.doctor_id
+
+
+diagnostic_tests [icon: clipboard, color: orange] {
+  test_id string pk
+  test_name string
+  description string
+  cost number
+}
+
+
+prescribed_tests [icon: list, color: red] {
+  prescribed_test_id string pk
+  consultation_id string fk
+  test_id string fk
+  status string   // prescribed, completed
+}
+
+
+consultations.consultation_id < prescribed_tests.consultation_id
+diagnostic_tests.test_id < prescribed_tests.test_id
+
+
+consultations.consultation_id <> diagnostic_tests.test_id
+
+
+reports [icon: file-text, color: green] {
+  report_id string pk
+  prescribed_test_id string fk
+  result string
+  remarks string
+  report_date timestamp
+}
+
+
+prescribed_tests.prescribed_test_id - reports.prescribed_test_id
+
+
+payments [icon: credit-card, color: yellow] {
+  payment_id string pk
+  consultation_id string fk
+  amount number
+  payment_method string
+  payment_status string   // paid, pending, failed
+  payment_date timestamp
+}
+
+
+consultations.consultation_id < payments.consultation_id
