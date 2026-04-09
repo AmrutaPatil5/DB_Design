@@ -1,0 +1,124 @@
+vehicle_categories [icon: truck, color: orange] {
+  category_id string pk
+  name string
+  description string
+  created_at timestamp
+  updated_at timestamp
+}
+
+vehicles [icon: truck, color: blue] {
+  vehicle_id string pk
+  vehicle_number string
+  category_id string fk
+  owner_name string
+  contact_number string
+  created_at timestamp
+  updated_at timestamp
+}
+
+parking_zones [icon: map, color: purple] {
+  zone_id string pk
+  zone_name string
+  level_number number
+  description string
+  created_at timestamp
+  updated_at timestamp
+}
+
+spot_categories [icon: tag, color: orange] {
+  spot_category_id string pk
+  name string   // VIP, Staff, EV, General
+  description string
+  created_at timestamp
+  updated_at timestamp
+}
+
+parking_spots [icon: square, color: blue] {
+  spot_id string pk
+  zone_id string fk
+  spot_category_id string fk
+  created_at timestamp
+  updated_at timestamp
+}
+
+parking_tickets [icon: ticket, color: green] {
+  ticket_id string pk
+  vehicle_id string fk
+  issue_time timestamp
+  created_at timestamp
+}
+
+parking_sessions [icon: activity, color: red] {
+  session_id string pk
+  vehicle_id string fk
+  spot_id string fk
+  ticket_id string fk
+  entry_time timestamp
+  exit_time timestamp
+  status string   // active, completed
+  created_at timestamp
+  updated_at timestamp
+}
+
+payments [icon: credit-card, color: yellow] {
+  payment_id string pk
+  session_id string fk
+  amount number
+  payment_status string
+  payment_time timestamp
+  created_at timestamp
+}
+
+pricing_rules [icon: dollar-sign, color: green] {
+  pricing_id string pk
+  category_id string fk        // vehicle category
+  spot_category_id string fk   // VIP / EV etc
+  price_per_hour number
+  created_at timestamp
+}
+
+access_categories [icon: users, color: purple] {
+  access_category_id string pk
+  name string   // VIP, Staff, Exhibitor, Cosplayer
+  description string
+  created_at timestamp
+}
+
+vehicle_access [icon: link, color: red] {
+  id string pk
+  vehicle_id string fk
+  access_category_id string fk
+  created_at timestamp
+}
+
+
+vehicles.category_id > vehicle_categories.category_id
+
+vehicles.vehicle_id <> access_categories.access_category_id
+
+parking_spots.zone_id > parking_zones.zone_id
+
+parking_spots.spot_category_id > spot_categories.spot_category_id
+
+parking_tickets.vehicle_id > vehicles.vehicle_id
+
+parking_sessions.vehicle_id > vehicles.vehicle_id
+
+parking_sessions.spot_id > parking_spots.spot_id
+
+parking_sessions.ticket_id - parking_tickets.ticket_id
+
+payments.session_id > parking_sessions.session_id
+
+vehicle_access.vehicle_id > vehicles.vehicle_id
+
+vehicle_access.access_category_id > access_categories.access_category_id
+
+pricing_rules.category_id > vehicle_categories.category_id
+
+pricing_rules.spot_category_id > spot_categories.spot_category_id
+
+
+
+
+
