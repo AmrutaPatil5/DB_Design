@@ -1,0 +1,134 @@
+Smart Elevator Control System
+
+Buildings [icon: building, color: blue] {
+  building_id serial PK
+  name string
+  address string
+  city string
+  state string
+  building_type string
+  total_floors int
+  created_at timestamp
+  updated_at timestamp
+}
+
+Floors [icon: layers, color: purple] {
+  floor_id serial PK
+  building_id int FK
+  floor_number int
+  floor_label string
+  is_accessible boolean
+  created_at timestamp
+}
+
+ElevatorShafts [icon: box, color: orange] {
+  shaft_id serial PK
+  building_id int FK
+  shaft_number int
+  max_speed number
+  capacity_limit int
+  created_at timestamp
+}
+
+Elevators [icon: move, color: green] {
+  elevator_id serial PK
+  building_id int FK
+  shaft_id int FK
+  elevator_code string
+  capacity int
+  max_weight number
+  manufacturer string
+  model string
+  installed_at timestamp
+  last_service_date timestamp
+}
+
+ElevatorFloorMap [icon: link, color: teal] {
+  id serial PK
+  elevator_id int FK
+  floor_id int FK
+  is_active boolean
+}
+
+FloorRequests [icon: send, color: yellow] {
+  request_id serial PK
+  building_id int FK
+  source_floor_id int FK
+  destination_floor_id int FK
+  request_type string
+  priority string
+  request_time timestamp
+  status string
+}
+
+RideAssignments [icon: arrow-right, color: blue] {
+  assignment_id serial PK
+  request_id int FK
+  elevator_id int FK
+  assigned_at timestamp
+  estimated_arrival_time timestamp
+}
+
+RideLogs [icon: clock, color: purple] {
+  ride_id serial PK
+  elevator_id int FK
+  request_id int FK
+  start_time timestamp
+  end_time timestamp
+  distance_travelled number
+  stops_count int
+  status string
+}
+
+ElevatorStatus [icon: activity, color: red] {
+  status_id serial PK
+  elevator_id int FK
+  current_floor_id int FK
+  status string
+  direction string
+  load_percentage number
+  recorded_at timestamp
+}
+
+MaintenanceRecords [icon: tool, color: red] {
+  maintenance_id serial PK
+  elevator_id int FK
+  issue_description string
+  issue_type string
+  priority string
+  status string
+  reported_at timestamp
+  started_at timestamp
+  completed_at timestamp
+}
+
+Floors.building_id > Buildings.building_id
+
+ElevatorShafts.building_id > Buildings.building_id
+
+Elevators.building_id > Buildings.building_id
+
+Elevators.shaft_id > ElevatorShafts.shaft_id
+
+ElevatorFloorMap.elevator_id > Elevators.elevator_id
+ElevatorFloorMap.floor_id > Floors.floor_id
+
+FloorRequests.source_floor_id > Floors.floor_id
+
+FloorRequests.destination_floor_id > Floors.floor_id
+
+FloorRequests.building_id > Buildings.building_id
+
+RideAssignments.request_id > FloorRequests.request_id
+
+RideAssignments.elevator_id > Elevators.elevator_id
+
+RideLogs.elevator_id > Elevators.elevator_id
+
+RideLogs.request_id > FloorRequests.request_id
+
+ElevatorStatus.elevator_id > Elevators.elevator_id
+
+ElevatorStatus.current_floor_id > Floors.floor_id
+
+MaintenanceRecords.elevator_id > Elevators.elevator_id
